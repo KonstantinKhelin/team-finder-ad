@@ -3,14 +3,11 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# TODO: Создать и заполнить .env, ориентируясь на .env_example
-
 SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
