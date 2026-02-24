@@ -4,6 +4,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# может реалтзовать редирект с базового url
+
 urlpatterns = [
     path('admin/', (admin.site.urls)),
     path('', include('projects.urls')),
