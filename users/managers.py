@@ -88,4 +88,4 @@ class CustomUserManager(BaseUserManager):
         # Кодируем в base64 для хранения в ImageField
         avatar_base64 = base64.b64encode(avatar_data).decode('utf-8')
 
-        return f'data:image/png;base64,{avatar_base64}'
+        return None #f'data:image/png;base64,{avatar_base64}'
