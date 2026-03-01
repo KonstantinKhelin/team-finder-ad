@@ -18,7 +18,7 @@ class Project(models.Model):
     )
 
     owner = models.ForeignKey(
-        'users.User',
+        'users.CustomUser',
         on_delete=models.CASCADE,
         related_name='owned_projects',
         verbose_name='Автор проекта'
@@ -42,7 +42,7 @@ class Project(models.Model):
     )
 
     participants = models.ManyToManyField(
-        'users.User',
+        'users.CustomUser',
         blank=True,
         related_name='participated_projects',
         verbose_name='Участники проекта'

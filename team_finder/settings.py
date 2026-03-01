@@ -8,7 +8,10 @@ SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.CustomUser'
+
+LOGIN_REDIRECT_URL = '/projects/list/'
+LOGIN_URL = '/users/login/'
 
 ALLOWED_HOSTS = []
 # Application definition
