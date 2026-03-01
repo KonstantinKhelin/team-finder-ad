@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import login
 
 from projects.models import Project
 from .forms import CustomAuthenticationForm, CustomUserForm
@@ -53,8 +54,16 @@ class CustomLoginView(LoginView):
     success_url = '/projects/list/'
 
     def form_valid(self, form):
-        login(self.request, form.get_user())
-        return super().form_valid(form)
+        user = form.get_user()
+        print(user)
+        if user is not None and user.is_active:
+            login(self.request, user)
+            print('Работает')
+            return super().form_valid(form)
+        else:
+            # Обработка случая, когда пользователь не найден или неактивен
+            form.add_error(None, 'Не удалось авторизоваться. Проверьте данные.')
+            return self.form_invalid(form)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

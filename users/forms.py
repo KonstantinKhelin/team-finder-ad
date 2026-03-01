@@ -11,9 +11,9 @@ class CustomUserForm(forms.ModelForm):
         fields = ["name", "surname", "email", "github_url", "phone", "avatar", "about",]
 
 class CustomAuthenticationForm(AuthenticationForm):
-    email = forms.CharField(
+    email = forms.EmailField(
         label='Email',
-        widget=forms.TextInput(attrs={'autofocus': True})
+        widget=forms.EmailInput(attrs={'autofocus': True})
     )
     password = forms.CharField(
         label='Пароль',
@@ -24,6 +24,8 @@ class CustomAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)  # Сохраняем request
         super().__init__(*args, **kwargs)
+        if 'username' in self.fields:
+            del self.fields['username']
 
     def clean(self):
         email = self.cleaned_data.get('email')
@@ -31,25 +33,19 @@ class CustomAuthenticationForm(AuthenticationForm):
 
         if email and password:
             self.user_cache = authenticate(
-                email=email,
+                username=email,
                 password=password
             )
             if self.user_cache is None:
-                if self.user_cache is None:
-                    raise forms.ValidationError(
-                'Пользователь с таким email не найден.',
-                code='no_user'
-            )
-                elif not self.user_cache.is_active:
-                    raise forms.ValidationError(
-                'Аккаунт деактивирован.',
-                code='inactive'
-            )
-                else:
-                    raise forms.ValidationError(
-                'Неверные email или пароль.',
-                code='invalid_login'
-            )
+                raise forms.ValidationError(
+                    'Неверные email или пароль.',
+            code='invalid_login'
+        )
+            elif not self.user_cache.is_active:
+                raise forms.ValidationError(
+            'Аккаунт деактивирован.',
+            code='inactive'
+        )
         return self.cleaned_data
 
     def get_user(self):
