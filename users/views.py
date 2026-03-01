@@ -6,6 +6,8 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
+from django.contrib import messages
+from django.urls import reverse
 
 from projects.models import Project
 from .forms import CustomAuthenticationForm, CustomUserForm, CustomRegistrationForm
@@ -30,20 +32,18 @@ def user_list(request):
     }
     return render(request, template, context)
 
-def register(request):
-    pass
-
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
-        form = CustomUserForm(request.POST or None, instance=request.user)
-
+        form = CustomUserForm(request.POST, instance=request.user)
         if form.is_valid():
-            form = form.save(commit=False)
             form.save()
-            return redirect('/projects/list/')
-
-    form = CustomUserForm(instance=request.user)
+            messages.success(request, 'Профиль успешно обновлён!')
+            return redirect(reverse_lazy('projects:list'))  # или '/projects/list/'
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
+    else:
+        form = CustomUserForm(instance=request.user)
 
     context = {
         'form': form
@@ -70,10 +70,8 @@ class CustomLoginView(LoginView):
 
     def form_valid(self, form):
         user = form.get_user()
-        print(user)
         if user is not None and user.is_active:
             login(self.request, user)
-            print('Работает')
             return super().form_valid(form)
         else:
             # Обработка случая, когда пользователь не найден или неактивен

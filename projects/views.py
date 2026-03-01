@@ -1,9 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
-#from django.views.generic.edit import CreateView
-#from django.urls import reverse_lazy
 
 from .models import Project, Skill
 from .forms import ProjectForm
@@ -22,12 +20,6 @@ def project_list(request):
     }
     return render(request, template, context)
 
-#class ProjectCreate(CreateView):
-#    model = Project
-#    form_class = ProjectForm
-#    template_name = 'projects/create-project.html'
-#    success_url = reverse_lazy('list')
-
 @login_required
 def project_create(request):
     form = ProjectForm(request.POST or None,)
@@ -39,37 +31,44 @@ def project_create(request):
     context = {'form': form}
     return render(request, 'projects/create-project.html', context)
 
-def project_edit(request, post_id):
-    pass
-#    post = get_object_or_404(Post, id=post_id)
-#
-#    if request.user.is_anonymous or request.user != post.author:
-#        return redirect('blog:post_detail', post_id)
-#
-#    if request.method == 'POST':
-#        form = PostForm(request.POST, files=request.FILES, instance=post)
-#        if form.is_valid():
-#            form.save()
-#        return redirect('blog:post_detail', post_id)
-#
-#    form = PostForm(instance=post)
-#    context = {
-#        'form': form
-#    }
-#    return render(request, 'blog/create.html', context)
+@login_required
+def project_edit(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+
+    if request.user.is_anonymous or request.user != project.owner:
+        return redirect('projects:detail', project_id)
+
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+        return redirect('projects:detail', project_id)
+
+    form = ProjectForm(instance=project)
+    context = {
+        'form': form
+    }
+    return render(request, 'projects/create-project.html', context)
 
 @login_required
-def project_complete(request, post_id):
+def project_complete(request, project_id):
     pass
 
 def project_detail(request, project_id):
-    pass
+    template = 'projects/project-details.html'
 
-def project_edit(request, project_id=-1):
-    pass
+    project = get_object_or_404(Project, id=project_id)
 
-def project_complete(request, project_id):
-    pass
+    if project is None:
+        raise Http404('Error')
+    elif project.status == 'closed':
+        if project.author != request.user:
+            raise Http404('Error')
+
+    context = {
+        'project': project,
+    }
+    return render(request, template, context)
 
 def skill_remove(request, project_id, skill_id):
     pass
