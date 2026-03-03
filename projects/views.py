@@ -67,7 +67,13 @@ def project_edit(request, project_id):
 
 @login_required
 def project_complete(request, project_id):
-    pass
+    project = get_object_or_404(Project, id=project_id)
+    if request.user == project.owner:
+        project.status = 'closed'
+        project.save()
+        return JsonResponse({"status": "project_complete", "status": "ok"})
+    else:
+        return JsonResponse({"error": "Permission denied"}, status=403)
 
 def project_detail(request, project_id):
     template = 'projects/project-details.html'
@@ -77,7 +83,7 @@ def project_detail(request, project_id):
     if project is None:
         raise Http404('Error')
     elif project.status == 'closed':
-        if project.author != request.user:
+        if project.owner != request.user:
             raise Http404('Error')
 
     context = {
