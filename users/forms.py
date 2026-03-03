@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
 
@@ -10,12 +10,22 @@ class CustomUserForm(forms.ModelForm):
         model = CustomUser
         fields = ["name", "surname", "email", "github_url", "phone", "avatar", "about",]
 
-class CustomRegistrationForm(forms.ModelForm):
+class CustomRegistrationForm(UserCreationForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'name', 'surname')
+        fields = ('email', 'name', 'surname',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Удаляем поле username, если оно есть
+        if 'username' in self.fields:
+            self.fields.pop('username')
+        if 'password1' in self.fields:
+            self.fields.pop('password1')
+        if 'password2' in self.fields:
+            self.fields.pop('password2')
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -23,13 +33,19 @@ class CustomRegistrationForm(forms.ModelForm):
             raise forms.ValidationError('Пользователь с таким email уже существует.')
         return email
 
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
-        return password
-
     def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password"])
+        """
+        Переопределяем метод save, чтобы корректно использовать наш менеджер.
+        """
+        cleaned_data = self.cleaned_data
+
+        user = CustomUser.objects.create_user(
+            email=cleaned_data['email'],
+            name=cleaned_data['name'],
+            surname=cleaned_data['surname'],
+            password=cleaned_data['password'],
+        )
+
         if commit:
             user.save()
         return user

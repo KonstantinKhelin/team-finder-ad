@@ -11,7 +11,6 @@ from .forms import ProjectForm
 def project_list(request):
     all_skills = Skill.objects.all()
     active_skill = request.GET.get('skill')
-    
     if active_skill:
         projects = Project.objects.all().filter(skills__name=active_skill)
     else:
@@ -25,7 +24,7 @@ def project_list(request):
     context = {
         'projects': projects,
         'all_skills': all_skills,
-        'active_skill': active_skill
+        'active_skill': active_skill,
     }
     #{"projects": <отфильтрованный queryset проектов>, "all_skills": <все добавленные в БД навыки>, "active_skill": <выбранный фильтр>}
     return render(request, 'projects/project_list.html', context)

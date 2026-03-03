@@ -59,12 +59,13 @@ def edit_profile(request):
 class RegistrationView(CreateView):
     form_class = CustomRegistrationForm
     template_name = 'users/register.html'
-    success_url = reverse_lazy('users:login')
+    success_url = reverse_lazy('projects:list')
 
     def form_valid(self, form):
         user = form.save(commit=False)
         user.is_active = True 
         user.save()
+        login(self.request, user)
         return redirect(self.success_url)
 
 
