@@ -36,26 +36,24 @@ def user_list(request):
 
 @login_required
 def edit_profile(request):
+    user = get_object_or_404(CustomUser, id=request.user.id)
+
     if request.method == 'POST':
-        form = CustomUserForm(request.POST, instance=request.user)
+        form = CustomUserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Профиль успешно обновлён!')
-            return redirect(reverse_lazy('projects:list'))  # или '/projects/list/'
+            return redirect(reverse_lazy('users:profile', kwargs={'user_id': request.user.id}))
         else:
             messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
     else:
-        form = CustomUserForm(instance=request.user)
+        form = CustomUserForm(instance=user)
 
     context = {
         'form': form
     }
     return render(request, 'users/edit_profile.html', context)
 
-
-
-# В ответ на POST запрос нужно создать нового пользователя в соответствии с полученными данными,
-# авторизировать текущего пользователя и переадресовать его на главную страницу (/projects/list).
 class RegistrationView(CreateView):
     form_class = CustomRegistrationForm
     template_name = 'users/register.html'

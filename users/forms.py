@@ -8,7 +8,10 @@ from .models import CustomUser
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ["name", "surname", "email", "github_url", "phone", "avatar", "about",]
+        fields = ["name", "surname", "github_url", "phone", "avatar", "about",]
+        widgets = {
+            'about': forms.Textarea(attrs={'rows': 4}),
+        }
 
 class CustomRegistrationForm(UserCreationForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
