@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
+from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import JsonResponse, Http404
 import json
@@ -14,7 +15,10 @@ def project_list(request):
     active_skill = request.GET.get('skill')
 
     if active_skill:
-        projects = Project.objects.all().filter(skills__name=active_skill)
+        projects = Project.objects.all().filter(
+            Q(skills__name=active_skill)
+            & Q(status='open')
+            )
     else:
         projects = Project.objects.all().filter(status='open')
 
