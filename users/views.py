@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-# from django.core.paginator import Paginator
+from django.core.paginator import Paginator
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
@@ -24,13 +24,13 @@ def user_list(request):
 
     users = CustomUser.objects.all().filter(is_active=True).order_by('-id')
 
-    # Пагинатор на будущее
-    # paginator = Paginator(users, 12)
-    # page_number = request.GET.get('page')
-    # page_obj = paginator.get_page(page_number)
+    paginator = Paginator(users, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     context = {
-        "participants": users
+        'participants': page_obj,
+        'page_obj': page_obj
     }
     return render(request, template, context)
 

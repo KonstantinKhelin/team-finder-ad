@@ -12,18 +12,19 @@ from .forms import ProjectForm
 def project_list(request):
     all_skills = Skill.objects.all()
     active_skill = request.GET.get('skill')
+
     if active_skill:
         projects = Project.objects.all().filter(skills__name=active_skill)
     else:
         projects = Project.objects.all().filter(status='open')
 
-    # пагинатор на будущее
-    paginator = Paginator(projects, 4)
+    paginator = Paginator(projects, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     context = {
         'projects': page_obj,
+        'page_obj': page_obj,
         'all_skills': all_skills,
         'active_skill': active_skill,
     }

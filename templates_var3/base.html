@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,6 +7,7 @@
     <title>{% block title %}TeamFinder{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/paginator.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body data-page="{% block page_id %}default{% endblock %}">
