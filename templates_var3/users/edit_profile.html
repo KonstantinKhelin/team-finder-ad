@@ -6,6 +6,7 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 <link rel="stylesheet" href="{% static 'css/profile_edit.css' %}">
+<link rel="stylesheet" href="{% static 'css/error.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -13,7 +14,6 @@
     <h2 class="form-title">Редактирование профиля</h2>
     <form method="post" enctype="multipart/form-data" class="profile-edit-form">
         {% csrf_token %}
-
         <div class="avatar-upload">
             <div class="avatar-preview">
                 <!-- Превью текущего/нового аватара -->
@@ -57,10 +57,12 @@
             <div class="form-field">
                 {{ form.phone.label_tag }}
                 {{ form.phone }}
+                <small>{{ form.phone.help_text }}</small>
             </div>
             <div class="form-field">
                 {{ form.github_url.label_tag }}
                 {{ form.github_url }}
+                <small>{{ form.github_url.help_text }}</small>
             </div>
         </div>
 
@@ -73,6 +75,31 @@
             {% endfor %}
         </div>
         {% endif %}
+        
+        
+        
+        <!--{% if form.errors %}
+            <div class="error-banner">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        {{ error }}{% if not forloop.last %}; {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}-->
+
+        <!--{% if form.errors %}
+            <div class="minimal-errors">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                    <div class="error-item">
+                        <span class="error-icon">!</span>
+                        <span class="error-text">{{ error }}</span>
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}-->
 
         <div class="form-actions">
             <a href="/users/{{ user.id }}" class="cancel-button">Отмена</a>

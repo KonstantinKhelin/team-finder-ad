@@ -27,6 +27,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(
         unique=True,
         max_length=12,
+        help_text='Форматы: 8XXXXXXXXXX, либо +7XXXXXXXXXX',
         verbose_name='Номер телефона'
     )
 
@@ -34,6 +35,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         unique=True,
         blank=True,
         null=True,
+        help_text='Формат: https://github.com/username',
         verbose_name='Ссылка на Github'
     )
 
@@ -41,6 +43,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         max_length=256,
         blank=True,
         null=True,
+        help_text='Форматы: 8XXXXXXXXXX, либо +7XXXXXXXXXX. X — цифры.',
         verbose_name='Описание профиля'
     )
 

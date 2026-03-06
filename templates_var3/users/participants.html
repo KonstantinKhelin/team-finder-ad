@@ -29,7 +29,11 @@
             </div>
             <div class="participant-info">
                 <h3 class="participant-name">{{ participant.name }} {{ participant.surname }}</h3>
-                <p class="participant-role">{{ participant.about|truncatechars:80 }}</p>
+                {% if participant.about == None %}
+                    <p class="participant-role">Описание профиля пока не добавлено.</p>
+                {% else %}
+                    <p class="participant-role">{{ participant.about|truncatechars:80 }}</p>
+                {% endif %}
             </div>
             <div class="participant-card-footer">
                 <a href="/users/{{ participant.id }}" class="white-button">

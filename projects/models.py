@@ -34,6 +34,7 @@ class Project(models.Model):
         unique=True,
         blank=True,
         null=True,
+        help_text='Укажите полную ссылку на репозиторий, например: https://github.com/username/repository"',
         verbose_name='Ссылка на Github'
     )
 
