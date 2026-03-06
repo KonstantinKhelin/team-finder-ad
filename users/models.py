@@ -25,11 +25,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     phone = models.CharField(
+        unique=True,
         max_length=12,
         verbose_name='Номер телефона'
     )
 
     github_url = models.URLField(
+        unique=True,
         blank=True,
         null=True,
         verbose_name='Ссылка на Github'
