@@ -3,9 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.db.models import Q
+from django.urls import reverse_lazy
 from django.core.paginator import Paginator
 from django.http import JsonResponse, Http404
 import json
+from django.contrib import messages
 
 from .models import Project, Skill
 from .forms import ProjectForm
@@ -63,9 +65,15 @@ def project_edit(request, project_id):
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
             form.save()
-        return redirect('projects:detail', project_id)
-
-    form = ProjectForm(instance=project)
+            messages.success(request, 'Проект успешно обновлён!')
+            return redirect(reverse_lazy(
+                'projects:detail',
+                kwargs={'project_id': project_id}
+            ))
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
+    else:
+        form = ProjectForm(instance=project)
     context = {
         'form': form,
         "is_edit": True

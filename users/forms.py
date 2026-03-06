@@ -3,6 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import authenticate
 
 from .models import CustomUser
+from .validators import validate_phone_number, validate_github_url
 
 
 class CustomUserForm(forms.ModelForm):
@@ -12,6 +13,30 @@ class CustomUserForm(forms.ModelForm):
         widgets = {
             'about': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Ваш профиль — как открытый репозиторий. Заполните его, чтобы вас нашли!'}),
         }
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if phone:
+            normalized_phone = validate_phone_number(phone)
+            return normalized_phone
+        return phone
+
+    def clean_github_url(self):
+        github_url = self.cleaned_data.get('github_url')
+        if github_url:
+            validated_url = validate_github_url(github_url)
+            return validated_url
+        return github_url
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if 'phone' in self.cleaned_data:
+            instance.phone = self.cleaned_data['phone']
+        if 'github_url' in self.cleaned_data:
+            instance.github_url = self.cleaned_data['github_url']
+        if commit:
+            instance.save()
+        return instance
 
 
 class CustomRegistrationForm(UserCreationForm):
