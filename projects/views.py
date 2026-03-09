@@ -140,6 +140,7 @@ def project_detail(request, project_id):
     }
     return render(request, template, context)
 
+
 @login_required
 def skill_search(request):
     """Поиск навыков для автодополнения."""
@@ -163,10 +164,10 @@ def skill_add(request, project_id):
 
     try:
         data = json.loads(request.body.decode('utf-8'))
-        skill_name = data.get('name')
-        skill_id = data.get('skill_id')
+        skill_name = data.get('name', None)
+        skill_id = data.get('skill_id', None)
 
-        if not skill_id and not skill_name:
+        if skill_id is None and skill_name is None:
             return JsonResponse(
                 {"error": "Either 'skill_id' or 'name' must be provided"},
                 status=400
@@ -176,19 +177,16 @@ def skill_add(request, project_id):
             skill = get_object_or_404(Skill, id=skill_id)
             created = False
         else:
-            skill, created = Skill.objects.get_or_create(
-                name=skill_name.strip(),
-                defaults={'created_by': request.user}
-            )
+            skill, created = Skill.objects.get_or_create(name=skill_name.strip())
 
         project.skills.add(skill)
-        # Явно возвращаем ID навыка
         return JsonResponse({
             "skill_id": skill.id,
             "name": skill.name,
             "created": created,
             "added": True
         })
+
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
     except Exception as e:
