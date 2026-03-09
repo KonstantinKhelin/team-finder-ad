@@ -29,7 +29,7 @@ class CustomUserManager(BaseUserManager):
                     image_buffer.seek(0)
 
                     # Формируем имя файла
-                    avatar_filename = f'avatar_{name}_{random.randint(1000, 9999)}.png'
+                    avatar_filename = f'avatar_{name}_{surname}_{random.randint(1000, 9999)}.png'
 
                     # Сохраняем в хранилище и получаем путь
                     avatar_path = default_storage.save(
@@ -72,15 +72,25 @@ class CustomUserManager(BaseUserManager):
         if not name:
             raise ValueError("Name cannot be empty")
 
-        # Палитра пастельных цветов (RGB)
         colors = [
-            (255, 182, 193),  # Светло-розовый
-            (173, 216, 230),  # Светло-голубой
-            (144, 238, 144),  # Светло-зелёный
-            (250, 250, 210),  # Светло-жёлтый
-            (221, 160, 221),  # Сиреневый
-            (240, 230, 140),  # Палевый
-            (230, 230, 250),  # Лавандовый
+            (255, 182, 193),
+            (173, 216, 230),
+            (144, 238, 144),
+            (250, 250, 210),
+            (221, 160, 221),
+            (240, 230, 140), 
+            (230, 230, 250),
+            (254, 214, 188),
+            (239, 169, 74),
+            (255, 117, 20),
+            (93, 155, 155),
+            (127, 181, 181),
+            (222, 247, 254),
+            (255, 254, 224),
+            (250, 248, 246),
+            (29, 236, 248),
+            (255, 209, 220),
+            (161, 133, 148)
         ]
 
         bg_color = random.choice(colors)
