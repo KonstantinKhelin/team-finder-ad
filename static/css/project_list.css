@@ -60,7 +60,7 @@
 }
 
 .project-card-header-title a:hover {
-    color: blue;
+    color: rgb(0, 0, 255);
 }
 
 .project-owner-grid {
@@ -228,9 +228,34 @@
     color: white;
 }
 
-.filter-reset {
+/*.filter-reset {
     font-size: 13px;
     margin-left: 12px;
     text-decoration: underline;
     color: #666;
+}*/
+
+.filter-reset {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    padding: 5px 5px ;
+    margin-left: 5px;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+}
+
+.filter-reset .icon {
+    font-size: 16px;
+}
+
+.filter-reset:hover {
+    background: #000000;
 }
