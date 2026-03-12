@@ -32,20 +32,18 @@ def validate_phone_number(value):
             code='invalid_format'
         )
 
-    # Проверяем длину (после +7 должно быть 10 цифр)
-    if len(cleaned) != 12:  # +7 + 10 цифр
+    if len(cleaned) != 12:
         raise ValidationError(
             _('Некорректная длина номера'),
             code='invalid_length'
         )
 
-    # Дополнительная проверка на цифры после кода
     if not re.match(r'\+7\d{10}', cleaned):
         raise ValidationError(
             _('Номер содержит недопустимые символы'),
             code='invalid_characters'
         )
-    return cleaned  # Возвращаем нормализованный номер
+    return cleaned
 
 
 def validate_github_url(value):
@@ -65,12 +63,12 @@ def validate_github_url(value):
             )
 
         # Опционально: проверяем доступность ссылки
-        response = requests.head(value, timeout=5, allow_redirects=True)
-        if response.status_code not in [200, 301, 302]:
-            raise ValidationError(
-                _('Ссылка недоступна или ведёт на несуществующую страницу'),
-                code='unreachable_url'
-            )
+        # response = requests.head(value, timeout=5, allow_redirects=True)
+        # if response.status_code not in [200, 301, 302]:
+        #     raise ValidationError(
+        #         _('Ссылка недоступна или ведёт на несуществующую страницу'),
+        #         code='unreachable_url'
+        #     )
 
     except requests.exceptions.RequestException:
         raise ValidationError(

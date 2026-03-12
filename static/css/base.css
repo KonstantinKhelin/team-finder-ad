@@ -91,12 +91,19 @@ span svg {
     padding: 4px 8px;
 }
 
+
 .project-status-black {
+    display: inline-flex;
+    align-items: center; 
+    justify-content: center;
+    height: 24px;
     font-size: 12px;
     background: black;
     border-radius: 4px;
-    padding: 4px 8px;
+    padding: 0 8px;
     color: white;
+    box-sizing: border-box;
+    line-height: 1;
 }
 
 .black-button-share {
