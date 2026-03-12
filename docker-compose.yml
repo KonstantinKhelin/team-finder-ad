@@ -9,6 +9,47 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    container_name: teamfinder_backend
+    command: >
+      sh -c "
+        python manage.py migrate &&
+        python manage.py loaddata db.json &&
+        python manage.py collectstatic --noinput &&
+        python manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - ./backend:/backend
+      - static_volume:/backend/static
+      - media_volume:/backend/media
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+
+  gateway:
+    build: ./nginx/
+    env_file: .env
+    ports:
+      - "8000:80"   # хост:контейнер (nginx слушает 80 внутри)
+    volumes:
+      - static_volume:/static
+      - media_volume:/media
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
+  static_volume:
+  media_volume:
