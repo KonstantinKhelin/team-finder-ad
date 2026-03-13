@@ -2,7 +2,7 @@ import re
 from urllib.parse import urlparse
 
 import requests
-from django.conf.settings import ALLOWED_GITHUB_DOMAINS
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -24,10 +24,8 @@ def validate_phone_number(value):
     Принимает форматы: 8XXXXXXXXX или +7XXXXXXXXX.
     Преобразует в формат +7XXXXXXXXX.
     """
-    # Убираем все нецифровые символы, кроме + в начале
     cleaned = re.sub(r'[^\d+]', '', value)
 
-    # Проверяем, начинается ли номер с 8 или +7
     if cleaned.startswith('8'):
         cleaned = '+7' + cleaned[1:]
     elif cleaned.startswith('+7'):
@@ -61,7 +59,7 @@ def validate_github_url(value):
     try:
         parsed_url = urlparse(value)
 
-        if parsed_url.netloc not in ALLOWED_GITHUB_DOMAINS:
+        if parsed_url.netloc not in settings.ALLOWED_GITHUB_DOMAINS:
             raise ValidationError(
                 _('Ссылка должна вести на github.com'),
                 code='invalid_domain'

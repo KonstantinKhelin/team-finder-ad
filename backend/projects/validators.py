@@ -1,7 +1,7 @@
 import re
 from urllib.parse import urlparse
 
-from django.conf.settings import ALLOWED_GITHUB_DOMAINS
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -15,7 +15,7 @@ def validate_github_repo_url(value):
     domain = parsed_url.netloc.lower()
 
     # Проверка домена
-    if domain not in ALLOWED_GITHUB_DOMAINS:
+    if domain not in settings.ALLOWED_GITHUB_DOMAINS:
         raise ValidationError(
             _('Ссылка должна вести на github.com'),
             code='invalid_domain'
