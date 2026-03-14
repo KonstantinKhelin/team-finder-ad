@@ -3,13 +3,13 @@ from django.db import models
 
 class Project(models.Model):
     CHOICES = [
-        ("open", "Открыт"),
-        ("closed", "Закрыт")
+        ('open', 'Открыт'),
+        ('closed', 'Закрыт')
     ]
 
     name = models.CharField(
         max_length=200,
-        verbose_name="Название проекта"
+        verbose_name='Название проекта'
     )
 
     description = models.TextField(

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView
 
 from core.utils import paginate_queryset
@@ -24,7 +24,7 @@ def profile(request, user_id):
     else:
         projects = Project.objects.all().filter(owner=profile)
 
-    page_obj = paginate_queryset(projects, request, per_page=12)
+    page_obj = paginate_queryset(projects, request)
 
     context = {
         'user': profile,
@@ -38,7 +38,7 @@ def user_list(request):
 
     users = CustomUser.objects.all().filter(is_active=True).order_by('-id')
 
-    page_obj = paginate_queryset(users, request, per_page=12)
+    page_obj = paginate_queryset(users, request)
 
     context = {
         'participants': page_obj,
@@ -56,7 +56,7 @@ def edit_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Профиль успешно обновлён!')
-            return redirect(reverse_lazy(
+            return redirect(reverse(
                 'users:profile',
                 kwargs={'user_id': request.user.id}
             ))
@@ -109,4 +109,4 @@ class CustomLoginView(LoginView):
 @login_required
 def custom_logout(request):
     logout(request)
-    return redirect('/projects/list/')
+    return redirect('projects:list')

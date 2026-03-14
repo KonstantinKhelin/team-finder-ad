@@ -22,7 +22,7 @@ class CustomUserManager(BaseUserManager):
                 image = generate_avatar_image(name)
                 avatar = save_avatar_image(image, name, surname)
             except Exception as e:
-                logger.error(f"Ошибка генерации аватара для {name}: {e}")
+                logger.error(f'Ошибка генерации аватара для {name}: {e}')
                 avatar = None
 
         user = self.model(

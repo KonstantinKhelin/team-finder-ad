@@ -53,7 +53,7 @@ def project_create(request):
         return redirect('/projects/list/')
     context = {
         'form': form,
-        "is_edit": False
+        'is_edit': False
     }
     return render(request, 'projects/create-project.html', context)
 
@@ -80,7 +80,7 @@ def project_edit(request, project_id):
         form = ProjectForm(instance=project)
     context = {
         'form': form,
-        "is_edit": True
+        'is_edit': True
     }
     return render(request, 'projects/create-project.html', context)
 
@@ -92,8 +92,8 @@ def project_complete(request, project_id):
     if request.user == project.owner:
         project.status = 'closed'
         project.save()
-        return JsonResponse({"status": "ok", "project_status": "closed"})
-    return JsonResponse({"error": "Permission denied"}, status=HTTPStatus.FORBIDDEN)
+        return JsonResponse({'status': 'ok', 'project_status': 'closed'})
+    return JsonResponse({'error': 'Permission denied'}, status=HTTPStatus.FORBIDDEN)
 
 
 @login_required
@@ -122,11 +122,11 @@ def participate(request, project_id):
     participants_count = project.participants.count()
 
     return JsonResponse({
-        "status": "ok",
-        "participation_status": status,
-        "project_id": project_id,
-        "participants_count": participants_count,
-        "is_participant": not is_participant
+        'status': 'ok',
+        'participation_status': status,
+        'project_id': project_id,
+        'participants_count': participants_count,
+        'is_participant': not is_participant
     })
 
 
@@ -155,7 +155,7 @@ def skill_search(request):
         return JsonResponse([], safe=False)
 
     skills = Skill.objects.filter(name__istartswith=q).order_by('name')[:SKILLS_AUTOCOMPLETE_LIMIT]
-    results = [{"id": skill.id, "name": skill.name} for skill in skills]
+    results = [{'id': skill.id, 'name': skill.name} for skill in skills]
     return JsonResponse(results, safe=False)
 
 
@@ -164,10 +164,10 @@ def skill_add(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
     if request.user != project.owner:
-        return JsonResponse({"error": "Permission denied"}, status=HTTPStatus.FORBIDDEN)
+        return JsonResponse({'error': 'Permission denied'}, status=HTTPStatus.FORBIDDEN)
 
     if request.method != 'POST':
-        return JsonResponse({"error": "Method not allowed"}, status=HTTPStatus.METHOD_NOT_ALLOWED)
+        return JsonResponse({'error': 'Method not allowed'}, status=HTTPStatus.METHOD_NOT_ALLOWED)
 
     try:
         data = json.loads(request.body.decode('utf-8'))
@@ -176,7 +176,7 @@ def skill_add(request, project_id):
 
         if skill_id is None and skill_name is None:
             return JsonResponse(
-                {"error": "Either 'skill_id' or 'name' must be provided"},
+                {'error': 'Either 'skill_id' or 'name' must be provided'},
                 status=HTTPStatus.BAD_REQUEST
             )
 
@@ -188,16 +188,16 @@ def skill_add(request, project_id):
 
         project.skills.add(skill)
         return JsonResponse({
-            "skill_id": skill.id,
-            "name": skill.name,
-            "created": created,
-            "added": True
+            'skill_id': skill.id,
+            'name': skill.name,
+            'created': created,
+            'added': True
         })
 
     except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON"}, status=HTTPStatus.BAD_REQUEST)
+        return JsonResponse({'error': 'Invalid JSON'}, status=HTTPStatus.BAD_REQUEST)
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=HTTPStatus.INTERNAL_SERVER_ERROR)
+        return JsonResponse({'error': str(e)}, status=HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
 @login_required
@@ -206,17 +206,17 @@ def skill_remove(request, project_id, skill_id):
     project = get_object_or_404(Project, id=project_id)
 
     if request.user != project.owner:
-        return JsonResponse({"error": "Permission denied"}, status=HTTPStatus.FORBIDDEN)
+        return JsonResponse({'error': 'Permission denied'}, status=HTTPStatus.FORBIDDEN)
 
     if request.method != 'POST':
-        return JsonResponse({"error": "Method not allowed"}, status=HTTPStatus.METHOD_NOT_ALLOWED)
+        return JsonResponse({'error': 'Method not allowed'}, status=HTTPStatus.METHOD_NOT_ALLOWED)
 
     skill = get_object_or_404(Skill, id=skill_id)
 
     if project.skills.filter(id=skill.id).exists():
         project.skills.remove(skill)
         return JsonResponse({
-            "status": "removed_from_project",
-            "skill_id": skill_id
+            'status': 'removed_from_project',
+            'skill_id': skill_id
         })
-    return JsonResponse({"error": "Skill not found in project"}, status=HTTPStatus.NOT_FOUND)
+    return JsonResponse({'error': 'Skill not found in project'}, status=HTTPStatus.NOT_FOUND)
