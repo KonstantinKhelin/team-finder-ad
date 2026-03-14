@@ -4,9 +4,9 @@ import json
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from core.constants import (
@@ -94,6 +94,7 @@ def project_complete(request, project_id):
     project.status = PROJECT_STATUS_CLOSED
     project.save()
     return JsonResponse({'status': 'ok', 'project_status': PROJECT_STATUS_CLOSED})
+
 
 @login_required
 @require_POST

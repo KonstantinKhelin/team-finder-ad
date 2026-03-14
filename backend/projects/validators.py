@@ -1,4 +1,3 @@
-import re
 from urllib.parse import urlparse
 
 from django.conf import settings

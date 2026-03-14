@@ -12,7 +12,7 @@ DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
 AUTH_USER_MODEL = 'users.CustomUser'
 
 LOGIN_REDIRECT_URL = reverse_lazy('projects:list')
-LOGIN_URL =  reverse_lazy('users:login')
+LOGIN_URL = reverse_lazy('users:login')
 
 ALLOWED_GITHUB_DOMAINS = ('github.com', 'www.github.com')
 
@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_cleanup.apps.CleanupConfig',
     'core',
-    'users'',
+    'users',
     'projects',
 ]
 
@@ -55,7 +55,7 @@ ROOT_URLCONF = 'team_finder.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / f'templates_var{config('TASK_VERSION', default='1')}'],
+        'DIRS': [BASE_DIR / f'templates_var{config("TASK_VERSION", default="1")}'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

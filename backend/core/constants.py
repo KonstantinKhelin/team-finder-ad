@@ -1,3 +1,5 @@
+import re
+
 # users/avatars_utils.py
 AVATAR_FONT_SIZE = 80
 AVATAR_BACKGROUND_COLORS = (
@@ -19,7 +21,7 @@ FONT_PATHS = [
 ]
 AVATAR_SIZE = 128
 AVATAR_SIZE_TUPLE = (128, 128)
-AVATAR_TEXT_VERTICAL_OFFSET = -10 
+AVATAR_TEXT_VERTICAL_OFFSET = -10
 
 # users/validators.py
 PHONE_CLEAN_PATTERN = re.compile(r'[^\d+]')

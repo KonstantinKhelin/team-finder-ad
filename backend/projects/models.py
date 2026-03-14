@@ -2,6 +2,7 @@ from django.db import models
 
 from core.constants import PROJECT_STATUS_OPEN, PROJECT_STATUS_CLOSED
 
+
 class Project(models.Model):
     CHOICES = [
         (PROJECT_STATUS_OPEN, 'Открыт'),
@@ -15,6 +16,7 @@ class Project(models.Model):
 
     description = models.TextField(
         blank=True,
+        null=True,
         verbose_name='Описание проекта'
     )
 

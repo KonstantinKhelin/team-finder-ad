@@ -2,7 +2,6 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView
@@ -85,7 +84,7 @@ class RegistrationView(CreateView):
 class CustomLoginView(LoginView):
     authentication_form = CustomAuthenticationForm
     template_name = 'users/login.html'
-    success_url = reverse_lazy('projects:list') 
+    success_url = reverse_lazy('projects:list')
 
     def form_valid(self, form):
         user = form.get_user()
