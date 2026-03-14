@@ -5,8 +5,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', (admin.site.urls)),
-    path('', RedirectView.as_view(url='/projects/list/', permanent=False)),
+    path('admin/', admin.site.urls),
+    path('', RedirectView.as_view(url=reverse_lazy('projects:list'), permanent=False)),
     path('projects/', include('projects.urls')),
     path('users/', include('users.urls'))
 ]

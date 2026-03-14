@@ -5,6 +5,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from core.constants import GITHUB_REPOSITORY_VALID_PATTERN
+
 
 def validate_github_repo_url(value):
     """
@@ -14,18 +16,15 @@ def validate_github_repo_url(value):
     parsed_url = urlparse(value)
     domain = parsed_url.netloc.lower()
 
-    # Проверка домена
     if domain not in settings.ALLOWED_GITHUB_DOMAINS:
         raise ValidationError(
             _('Ссылка должна вести на github.com'),
             code='invalid_domain'
         )
 
-    # Проверка пути — должен соответствовать формату /<username>/<repo>
     path = parsed_url.path.strip('/')
-    pattern = r'^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$'
 
-    if not re.match(pattern, path):
+    if not GITHUB_REPOSITORY_VALID_PATTERN.match(path):
         raise ValidationError(
             _('Некорректный формат URL репозитория. Ожидаемый формат: github.com/username/repository'),
             code='invalid_repo_format'

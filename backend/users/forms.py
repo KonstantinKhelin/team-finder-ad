@@ -9,7 +9,7 @@ from .validators import validate_phone_number, validate_github_url
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['name', 'surname', 'github_url', 'phone', 'avatar', 'about',]
+        fields = ('name', 'surname', 'github_url', 'phone', 'avatar', 'about')
         widgets = {
             'about': forms.Textarea(
                 attrs={
@@ -50,11 +50,10 @@ class CustomRegistrationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'name', 'surname',)
+        fields = ('email', 'name', 'surname')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Удаляем поле username, если оно есть
         if 'username' in self.fields:
             self.fields.pop('username')
         if 'password1' in self.fields:

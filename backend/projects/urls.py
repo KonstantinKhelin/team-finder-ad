@@ -16,6 +16,6 @@ urlpatterns = [
         '<int:project_id>/skills/<int:skill_id>/remove/',
         views.skill_remove, name='remove_skill'
     ),
-    path('<int:project_id>/skills/add/', views.skill_add, name='add'),
-    path('skills/', views.skill_search, name='search'),
+    path('<int:project_id>/skills/add/', views.skill_add, name='add_skill'),
+    path('skills/', views.skill_search, name='search_skill'),
 ]

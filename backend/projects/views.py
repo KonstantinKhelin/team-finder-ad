@@ -6,15 +6,17 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_POST
 
 from core.constants import (
     PARTICIPANT_ACTION_ADD,
     PARTICIPANT_ACTION_REMOVE,
     SKILLS_AUTOCOMPLETE_LIMIT,
+    PROJECT_STATUS_OPEN,
+    PROJECT_STATUS_CLOSED,
 )
-from core.utils import paginate_queryset
+from core.utils import paginate_queryset, check_project_owner
 from .forms import ProjectForm
 from .models import Project, Skill
 
@@ -26,12 +28,12 @@ def project_list(request):
     if active_skill:
         projects = Project.objects.all().filter(
             Q(skills__name=active_skill)
-            & Q(status='open')
+            & Q(status=PROJECT_STATUS_OPEN)
         )
     else:
-        projects = Project.objects.all().filter(status='open')
+        projects = Project.objects.all().filter(status=PROJECT_STATUS_OPEN)
 
-    page_obj = paginate_queryset(projects, request, per_page=12)
+    page_obj = paginate_queryset(projects, request)
 
     context = {
         'projects': page_obj,
@@ -50,7 +52,7 @@ def project_create(request):
         obj.owner = request.user
         form.save()
         obj.participants.add(obj.owner)
-        return redirect('/projects/list/')
+        return redirect('projects:list')
     context = {
         'form': form,
         'is_edit': False
@@ -62,15 +64,14 @@ def project_create(request):
 def project_edit(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
-    if request.user.is_anonymous or request.user != project.owner:
-        return redirect('projects:detail', project_id)
+    check_project_owner(request, project)
 
     if request.method == 'POST':
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
             form.save()
             messages.success(request, 'Проект успешно обновлён!')
-            return redirect(reverse_lazy(
+            return redirect(reverse(
                 'projects:detail',
                 kwargs={'project_id': project_id}
             ))
@@ -89,26 +90,20 @@ def project_edit(request, project_id):
 @require_POST
 def project_complete(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-    if request.user == project.owner:
-        project.status = 'closed'
-        project.save()
-        return JsonResponse({'status': 'ok', 'project_status': 'closed'})
-    return JsonResponse({'error': 'Permission denied'}, status=HTTPStatus.FORBIDDEN)
-
+    check_project_owner(request, project)
+    project.status = PROJECT_STATUS_CLOSED
+    project.save()
+    return JsonResponse({'status': 'ok', 'project_status': PROJECT_STATUS_CLOSED})
 
 @login_required
 @require_POST
 def participate(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
-    if project.status == 'closed':
+    if project.status == PROJECT_STATUS_CLOSED:
         return JsonResponse({'error': 'Project is closed'}, status=HTTPStatus.FORBIDDEN)
 
-    if project.owner == request.user:
-        return JsonResponse(
-            {'error': 'Cannot remove owner from participants'},
-            status=HTTPStatus.FORBIDDEN
-        )
+    check_project_owner(request, project)
 
     is_participant = project.participants.filter(id=request.user.id).exists()
 
@@ -132,14 +127,10 @@ def participate(request, project_id):
 
 def project_detail(request, project_id):
     template = 'projects/project-details.html'
-
     project = get_object_or_404(Project, id=project_id)
 
-    if project is None:
-        raise Http404('Project does not exist')
-    if project.status == 'closed':
-        if project.owner != request.user:
-            raise Http404('Project is closed')
+    if project.status == PROJECT_STATUS_CLOSED:
+        check_project_owner(request, project)
 
     context = {
         'project': project,
@@ -160,14 +151,11 @@ def skill_search(request):
 
 
 @login_required
+@require_POST
 def skill_add(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
-    if request.user != project.owner:
-        return JsonResponse({'error': 'Permission denied'}, status=HTTPStatus.FORBIDDEN)
-
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Method not allowed'}, status=HTTPStatus.METHOD_NOT_ALLOWED)
+    check_project_owner(request, project)
 
     try:
         data = json.loads(request.body.decode('utf-8'))
@@ -176,7 +164,7 @@ def skill_add(request, project_id):
 
         if skill_id is None and skill_name is None:
             return JsonResponse(
-                {'error': 'Either 'skill_id' or 'name' must be provided'},
+                {'error': 'Either "skill_id" or "name" must be provided'},
                 status=HTTPStatus.BAD_REQUEST
             )
 
@@ -201,15 +189,12 @@ def skill_add(request, project_id):
 
 
 @login_required
+@require_POST
 def skill_remove(request, project_id, skill_id):
     """Удаление навыка из проекта."""
     project = get_object_or_404(Project, id=project_id)
 
-    if request.user != project.owner:
-        return JsonResponse({'error': 'Permission denied'}, status=HTTPStatus.FORBIDDEN)
-
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Method not allowed'}, status=HTTPStatus.METHOD_NOT_ALLOWED)
+    check_project_owner(request, project)
 
     skill = get_object_or_404(Skill, id=skill_id)
 

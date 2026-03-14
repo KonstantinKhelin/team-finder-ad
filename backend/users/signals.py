@@ -17,7 +17,7 @@ def create_user_avatar(sender, instance, created, **kwargs):
             image = generate_avatar_image(instance.name)
             avatar_path = save_avatar_image(image, instance.name, instance.surname)
             instance.avatar = avatar_path
-            instance.save(update_fields=['avatar'])  # сохраняем только поле avatar
+            instance.save(update_fields=['avatar'])
             logger.info(f'Аватар создан для пользователя {instance.email}')
         except Exception as e:
             logger.error(f'Не удалось создать аватар для {instance.email}: {e}')

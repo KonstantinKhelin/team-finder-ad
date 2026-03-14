@@ -1,10 +1,11 @@
 from django.db import models
 
+from core.constants import PROJECT_STATUS_OPEN, PROJECT_STATUS_CLOSED
 
 class Project(models.Model):
     CHOICES = [
-        ('open', 'Открыт'),
-        ('closed', 'Закрыт')
+        (PROJECT_STATUS_OPEN, 'Открыт'),
+        (PROJECT_STATUS_CLOSED, 'Закрыт')
     ]
 
     name = models.CharField(
@@ -14,7 +15,6 @@ class Project(models.Model):
 
     description = models.TextField(
         blank=True,
-        null=True,
         verbose_name='Описание проекта'
     )
 
@@ -70,6 +70,7 @@ class Project(models.Model):
 class Skill(models.Model):
     name = models.CharField(
         max_length=124,
+        unique=True,
         verbose_name='Название навыка'
     )
 

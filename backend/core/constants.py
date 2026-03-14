@@ -1,6 +1,3 @@
-# users/validators.py
-PHONE_NUMBER_MAX_LENGTH = 12
-
 # users/avatars_utils.py
 AVATAR_FONT_SIZE = 80
 AVATAR_BACKGROUND_COLORS = (
@@ -14,8 +11,28 @@ AVATAR_BACKGROUND_COLORS = (
 AVATAR_TEXT_COLOR = (50, 50, 50)
 AVATAR_RANDOM_RANGE = (1000, 9999)
 
+FONT_PATHS = [
+    '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+    '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+    '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
+    'arial.ttf',
+]
+AVATAR_SIZE = 128
+AVATAR_SIZE_TUPLE = (128, 128)
+AVATAR_TEXT_VERTICAL_OFFSET = -10 
+
+# users/validators.py
+PHONE_CLEAN_PATTERN = re.compile(r'[^\d+]')
+PHONE_VALID_PATTERN = re.compile(r'\+7\d{10}')
+
+# projects/validators.py
+GITHUB_REPOSITORY_VALID_PATTERN = re.compile(r'^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$')
+
 # projects/views.py
 PARTICIPANT_ACTION_ADD = 'add'
 PARTICIPANT_ACTION_REMOVE = 'remove'
 
 SKILLS_AUTOCOMPLETE_LIMIT = 10
+
+PROJECT_STATUS_OPEN = 'open'
+PROJECT_STATUS_CLOSED = 'closed'

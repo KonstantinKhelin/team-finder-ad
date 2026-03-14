@@ -1,5 +1,4 @@
 import io
-import logging
 import os
 import random
 
@@ -12,18 +11,16 @@ from core.constants import (
     AVATAR_FONT_SIZE,
     AVATAR_RANDOM_RANGE,
     AVATAR_TEXT_COLOR,
+    FONT_PATHS,
+    AVATAR_SIZE,
+    AVATAR_SIZE_TUPLE,
+    AVATAR_TEXT_VERTICAL_OFFSET,
 )
-
-logger = logging.getLogger(__name__)
 
 
 def get_font(size=AVATAR_FONT_SIZE):
-    font_paths = [
-        '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
-        '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
-        '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
-        'arial.ttf',
-    ]
+    font_paths = FONT_PATHS
+
     for path in font_paths:
         if os.path.exists(path):
             try:
@@ -37,7 +34,7 @@ def generate_avatar_image(name: str) -> Image.Image:
     """Генерирует изображение аватара с первой буквой имени."""
     bg_color = random.choice(AVATAR_BACKGROUND_COLORS)
 
-    image = Image.new('RGB', (128, 128), bg_color)
+    image = Image.new('RGB', AVATAR_SIZE_TUPLE, bg_color)
     draw = ImageDraw.Draw(image)
 
     first_letter = name[0].upper() if name else '?'
@@ -45,8 +42,8 @@ def generate_avatar_image(name: str) -> Image.Image:
     bbox = draw.textbbox((0, 0), first_letter, font=font)
     text_width = bbox[2] - bbox[0]
     text_height = bbox[3] - bbox[1]
-    x = (128 - text_width) // 2
-    y = (128 - text_height) // 2 - 10
+    x = (AVATAR_SIZE - text_width) // 2
+    y = (AVATAR_SIZE - text_height) // 2 + AVATAR_TEXT_VERTICAL_OFFSET
 
     draw.text((x, y), first_letter, fill=AVATAR_TEXT_COLOR, font=font)
     return image
