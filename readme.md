@@ -18,7 +18,7 @@ Git (для клонирования репозитория).
 
 1. Клонирование репозитория
 bash
-git clone https://github.com/kostya019/team-finder-ad.git
+git clone https://github.com/KonstantinKhelin/team-finder-ad.git
 cd team-finder
 2. Настройка переменных окружения
 Скопируйте файл-образец .env_example в .env:
